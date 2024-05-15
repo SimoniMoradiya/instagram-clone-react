@@ -36,48 +36,73 @@ const Registration = () => {
         setPassword(e.target.value);
     }
 
+
+    const handleRegistration = (e) =>{
+        e.preventDefault();
+        createUserWithEmailAndPassword(auth, inputValue, password)
+            .then(async (response) => {
+                const userid = response.user.uid;
+                setTimeout(() => {
+                    history.push('/login');
+                }, 3000);
+                try{
+                    await setDoc(doc(database, "users", userid), {
+                        email: inputValue,
+                        name: name,
+                        username: username
+                    });
+                } catch(e){
+                    console.error("Error adding document: ", e);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    
+    }
+
     
 
-    const handleRegistration = async (e) => {
-        e.preventDefault();
+    // const handleRegistration = async (e) => {
+    //     e.preventDefault();
 
-        let fieldToSave = null;
-        let valueToSave = null;
+    //     let fieldToSave = null;
+    //     let valueToSave = null;
 
-        // Check if the input value is an email or phone number
-        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue)) {
-            fieldToSave = "email";
-            valueToSave = inputValue;
-        } else if (/^\d+$/.test(inputValue)) {
-            fieldToSave = "phoneNumber";
-            valueToSave = `${inputValue}@email.com`;
-        } else {
-            setError("Invalid email or phone number");
-            return;
-        }
+    //     // Check if the input value is an email or phone number
+    //     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue)) {
+    //         fieldToSave = "email";
+    //         valueToSave = inputValue;
+    //     } else if (/^\d+$/.test(inputValue)) {
+    //         fieldToSave = "phoneNumber";
+    //         valueToSave = `${inputValue}@email.com`;
+    //     } else {
+    //         setError("Invalid email or phone number");
+    //         return;
+    //     }
 
-        try {
-            // Create user in Firebase based on the field and value
-            const { user } = await createUserWithEmailAndPassword(auth, valueToSave, password);
+    //     try {
+    //         // Create user in Firebase based on the field and value
+    //         const { user } = await createUserWithEmailAndPassword(auth, valueToSave, password);
 
-            const userid = user.uid;
+    //         const userid = user.uid;
 
-            // Update user details in Firestore
-            await setDoc(doc(database, "users", userid), {
-                [fieldToSave]: valueToSave,
-                name: name,
-                username: username
-            });
+    //         // Update user details in Firestore
+    //         await setDoc(doc(database, "users", userid), {
+    //             [fieldToSave]: valueToSave,
+    //             name: name,
+    //             username: username
+    //         });
 
-            // Redirect to login page after successful registration
-            setTimeout(() => {
-                history.push('/login');
-            }, 3000);
-        } catch (error) {
-            console.error("Registration error:", error);
-            setError(error.message);
-        }
-    }
+    //         // Redirect to login page after successful registration
+    //         setTimeout(() => {
+    //             history.push('/login');
+    //         }, 3000);
+    //     } catch (error) {
+    //         console.error("Registration error:", error);
+    //         setError(error.message);
+    //     }
+    // }
 
 
  
