@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import gplayApp from '../img/gplay-app.png';
 import MsApp from '../img/ms-app.png';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth, app , database} from "../firebase.js";
+import { auth, app , database, signInWithGooglePopup} from "../firebase.js";
 import { doc,  setDoc } from "firebase/firestore";
 import { useHistory } from 'react-router-dom';
 
@@ -35,7 +35,6 @@ const Registration = () => {
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
     }
-
 
     const handleRegistration = (e) =>{
         e.preventDefault();
@@ -105,6 +104,27 @@ const Registration = () => {
     // }
 
 
+    /****************************************************************************************************** */
+
+
+    /// Google Authentication
+
+
+    const logGoogleUser = async () => {
+        try {
+            const response = await signInWithGooglePopup(auth);
+            console.log(response);
+            history.push('/login');
+        } catch (error) {
+            console.error('Google sign-in error:', error);
+        }
+    };
+
+
+
+    /********************************************************************************************** */
+
+
  
     return ( 
         <>
@@ -124,9 +144,9 @@ const Registration = () => {
                                 </div>
 
                                 <div className="col-12">
-                                    <button className="rg-fb-btn">
-                                        <span className="rg-fb-icon"><i className="fa-brands fa-square-facebook"></i></span>
-                                        <span className="rg-fb-text">Log in with Facebook</span>
+                                    <button className="rg-fb-btn" onClick={logGoogleUser}>
+                                        <span className="rg-fb-icon"><i className="fa-brands fa-google"></i></span>
+                                        <span className="rg-fb-text">Log in with Google</span>
                                     </button>
                                 </div>
 
